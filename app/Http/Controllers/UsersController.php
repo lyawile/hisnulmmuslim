@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UsersController extends Controller
 {
@@ -14,7 +16,7 @@ class UsersController extends Controller
      */
     public function index()
     {
-        //
+        return User::all();
     }
 
     /**
@@ -35,28 +37,15 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-//        $validated = $request->validate([
-//            "email" => 'required|email',
-//            "password" => 'required'
-//        ]);
-
-
         $validated = $this->validate($request, [
+            'name' => 'required',
             "email" => 'required|email',
             "password" => 'required'
         ]);
 
         if ($validated) {
-            return true;
-        } else {
-            return false;
+            return User::create($request->all());
         }
-
-//       dd($request->isMethod('post'));
-//       dd($request->bearerToken());
-//       dd($request->ip());
-//        dd($request->accepts(['application/json']));
-        dd($request->accepts(['text/html']));
 
     }
 
@@ -68,7 +57,11 @@ class UsersController extends Controller
      */
     public function show(User $user)
     {
-        //
+        try {
+            return User::find($user);
+        } catch (ModelNotFoundException | NotFoundHttpException $exception) {
+            return $exception->getMessage();
+        }
     }
 
     /**
@@ -79,7 +72,12 @@ class UsersController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        try {
+            return User::find($user)[0];
+        } catch (NotFoundHttpException | ModelNotFoundException $e) {
+            return $e->getMessage();
+        }
+
     }
 
     /**
@@ -103,5 +101,17 @@ class UsersController extends Controller
     public function destroy(User $user)
     {
         //
+    }
+
+    // register user
+    public function register(Request $request)
+    {
+
+    }
+
+    // upload audio file
+    public function upload(Request $request)
+    {
+
     }
 }
