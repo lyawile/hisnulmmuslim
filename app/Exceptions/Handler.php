@@ -2,7 +2,11 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Spatie\FlareClient\Http\Exceptions\NotFound;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -46,5 +50,21 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $e)
+    {
+        switch ($e) {
+            case  $e instanceof ModelNotFoundException :
+                return response()->json([
+                    'error' => "The record is not found"
+                ], 404);
+                break;
+            case $e instanceof NotFoundHttpException:
+                return response()->json(
+                    ['error' => "Something is missing in your path"], 401
+                );
+        }
+        return parent::render($request, $e);
     }
 }
