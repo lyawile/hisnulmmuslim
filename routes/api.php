@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HadeethController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,3 +25,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::resource('/users', UsersController::class);
 Route::post('/register', [UsersController::class, 'register'])->name('user.register');
 Route::post('/login', [UsersController::class, 'register'])->name('user.login');
+Route::resource('/hadeeth', HadeethController::class);
