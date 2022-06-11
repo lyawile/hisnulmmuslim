@@ -90,4 +90,23 @@ class HadeethController extends Controller
     {
         //
     }
+
+    /**
+     * Upload the hadeeth audio to the app
+     */
+
+    public function upload(Request $request)
+    {
+        $request->validate([
+            'id' => 'integer',
+            'audio' => 'required|mimes:mp3,wav,mp4|max:40000'
+        ]);
+
+        $file = $request->file('audio');
+        $hasFile = $request->hasFile('audio');
+        if ($hasFile) {
+            $fileName = strtolower($request->file('audio')->getClientOriginalName());
+            return $file->move(public_path(), $fileName);
+        }
+    }
 }
