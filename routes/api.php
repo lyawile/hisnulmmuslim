@@ -24,5 +24,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::resource('/users', UsersController::class);
 Route::post('/register', [UsersController::class, 'register'])->name('user.register');
 Route::post('/login', [UsersController::class, 'register'])->name('user.login');
+Route::get('/hadeeth/get-audio-files', [HadeethController::class, 'getAudioFiles']);
 Route::resource('/hadeeth', HadeethController::class);
 Route::post('/hadeeth/upload', [HadeethController::class, 'upload']);

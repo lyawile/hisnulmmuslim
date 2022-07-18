@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hadeeth;
+use File;
 use Illuminate\Http\Request;
+use ZipArchive;
+
+//use Illuminate\Support\Facades\File;
 
 class HadeethController extends Controller
 {
@@ -106,7 +110,28 @@ class HadeethController extends Controller
         $hasFile = $request->hasFile('audio');
         if ($hasFile) {
             $fileName = strtolower($request->file('audio')->getClientOriginalName());
-            return $file->move(public_path(), $fileName);
+            return $file->move(public_path() . '/audio/', $fileName);
         }
+    }
+
+    public function getAudioFiles()
+    {
+        $zip = new ZipArchive();
+        $zipFile = "audio_files.zip";
+        if (File::exists(public_path() . '/audio/' . $zipFile)) {
+            File::delete(public_path() . '/audio/' . $zipFile);
+            echo "deleted0";
+        }
+        if ($zip->open(public_path() . '/audio/' . $zipFile, ZipArchive::CREATE)) {
+            $files = File::files(public_path() . '/audio/');
+            foreach ($files as $key => $value) {
+                $relativeNameInZipFile = basename($value);
+                $zip->addFile($value, $relativeNameInZipFile);
+            }
+        }
+        $zip->close();
+        $response = response()->download(public_path('/audio/' . $zipFile));
+        ob_end_clean();
+        return $response;
     }
 }
